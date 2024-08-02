@@ -6,6 +6,8 @@ yarn-debug.log*
 yarn-error.log*
 firebase-debug.log*
 firebase-debug.*.log*
+.history/
+.DS_Store
 
 # Firebase cache
 .firebase/
