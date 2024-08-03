@@ -1,0 +1,18 @@
+{
+  "name": "olympic-medal-tracker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "cypress open",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
+  },
+  "author": "Alex Moss",
+  "license": "All Rights Reserved",
+  "devDependencies": {
+    "chai": "^4.5.0",
+    "cypress": "^13.13.2",
+    "sinon": "^12.0.1"
+  }
+}

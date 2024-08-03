@@ -1,0 +1,4 @@
+[
+  { "country": "USA", "gold": 3, "silver": 2, "bronze": 1 },
+  { "country": "China", "gold": 2, "silver": 3, "bronze": 4 }
+]
