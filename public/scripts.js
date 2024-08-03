@@ -84,12 +84,26 @@ window.toggleDescription = function toggleDescription() {
   const chevron = document.getElementById('chevron');
   if (content.style.display === 'none' || content.style.display === '') {
     content.style.display = 'block';
-    chevron.classList.remove('up');
+    chevron.classList.remove('right');
     chevron.classList.add('down');
   } else {
     content.style.display = 'none';
     chevron.classList.remove('down');
-    chevron.classList.add('up');
+    chevron.classList.add('right');
+  }
+}
+
+window.toggleSection = function toggleSection(id) {
+  const section = document.getElementById(id);
+  const chevron = document.getElementById(`chevron-${id}`);
+  if (section.classList.contains('active')) {
+    section.classList.remove('active');
+    chevron.classList.remove('down');
+    chevron.classList.add('right');
+  } else {
+    section.classList.add('active');
+    chevron.classList.remove('right');
+    chevron.classList.add('down');
   }
 }
 

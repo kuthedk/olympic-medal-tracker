@@ -80,12 +80,12 @@ header.light-mode {
   transition: transform 0.3s;
 }
 
-.chevron.down {
-  transform: rotate(45deg);
+.chevron.right {
+  transform: rotate(-45deg);
 }
 
-.chevron.up {
-  transform: rotate(-135deg);
+.chevron.down {
+  transform: rotate(45deg);
 }
 
 .description.light-mode .chevron {
@@ -204,6 +204,18 @@ td.light-mode {
 
 .credits a:hover {
   color: #fff;
+}
+
+.collapsible-content {
+  display: none;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+  margin-left: 20px;
+}
+
+.collapsible-content.active {
+  display: block;
+  max-height: 1000px; /* large value to ensure expansion */
 }
 
 @media (max-width: 768px) {
