@@ -17,12 +17,20 @@ const analytics = getAnalytics(app);
 document.getElementById('dark-mode-toggle').addEventListener('change', toggleDarkMode);
 
 (async function () {
+  const spinner = document.getElementById('loading-spinner');
+  const table = document.querySelector('table');
+  table.classList.add('hidden'); // Hide the table initially
+  spinner.style.display = 'block'; // Show the spinner
+
   const medalData = await fetchMedalData();
   const rankedData = calculatePoints(medalData);
   renderTable(rankedData);
+
+  spinner.style.display = 'none'; // Hide the spinner
+  table.classList.remove('hidden'); // Show the table
 })();
 
-async function fetchMedalData() {
+export async function fetchMedalData() {
   try {
     const response = await fetch('https://api.olympics.kevle.xyz/medals');
     const data = await response.json();
@@ -40,7 +48,7 @@ async function fetchMedalData() {
   }
 }
 
-async function fetchCountryFlags() {
+export async function fetchCountryFlags() {
   try {
     const response = await fetch('https://restcountries.com/v3.1/all');
     const data = await response.json();
@@ -56,7 +64,7 @@ async function fetchCountryFlags() {
   }
 }
 
-function calculatePoints(data) {
+export function calculatePoints(data) {
   return data.map(entry => ({
     ...entry,
     points: entry.gold * 25 + entry.silver * 10 + entry.bronze * 4
@@ -78,6 +86,11 @@ function renderTable(data) {
     tableBody.innerHTML += row;
   });
 }
+
+window.calculatePoints = calculatePoints;
+window.fetchMedalData = fetchMedalData;
+window.fetchCountryFlags = fetchCountryFlags;
+window.renderTable = renderTable;
 
 window.toggleDescription = function toggleDescription() {
   const content = document.getElementById('description-content');

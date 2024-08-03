@@ -69,3 +69,7 @@ node_modules/
 
 # dataconnect generated files
 .dataconnect
+
+# Cypress
+cypress/downloads/
+cypress/screenshots/

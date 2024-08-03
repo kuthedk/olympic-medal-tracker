@@ -20,6 +20,7 @@
   </header>
 
   <div class="container">
+
     <div class="description">
       <h2 onclick="toggleDescription()">Why This Olympic Points System Shines: A Balanced Approach to Medal Valuation
         <span id="chevron" class="chevron right"></span>
@@ -47,7 +48,7 @@
           <h4 onclick="toggleSection('section2')">🏅 Encourages Pursuit of Excellence
             <span id="chevron-section2" class="chevron right"></span>
           </h4>
-          <p id="section2" class="collapsible-content">Our system motivates athletes to aim for the top! Gold medals
+          <p id="section2" class="collapsible-content">My system motivates athletes to aim for the top! Gold medals
             hold the most value, but winning any medal is highly rewarding. This drives athletes to push their limits
             and perform their best across all events, promoting a culture of excellence and perseverance.</p>
 
@@ -82,6 +83,7 @@
     </div>
 
     <h2>Current Medal Rankings</h2>
+    <div id="loading-spinner" class="spinner" style="display: none;"></div>
     <table>
       <thead>
         <tr>
@@ -102,7 +104,7 @@
 
   <footer>
     <div class="credits">
-      <p>Website by Alex Moss. Data provided by the unofficial <a href="https://api.olympics.kevle.xyz/medals"
+      <p>Website by Alex Moss. Data provided by the unofficial <a href="https://github.com/kevle1/paris-2024-olympic-api"
           target="_blank">Paris 2024 Olympic Medals API</a>. Follow me on <a href="https://github.com/kuthedk"
           target="_blank">GitHub</a> and <a href="https://www.threads.net/@kuthedk" target="_blank">Threads</a>.</p>
       <p>All trademarks, data, and other relevant properties are the copyright and property of the International Olympic
