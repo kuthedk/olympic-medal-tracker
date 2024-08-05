@@ -33,9 +33,11 @@
           <li>10 points for silver 🥈</li>
           <li>4 points for bronze 🥉</li>
         </ul>
-        <p>This 2.5x multiplication pattern ensures a balanced and accurate reflection of athletic achievements.</p>
+        <p>This 2.5x pattern ensures a balanced and accurate reflection of athletic achievements.</p>
 
-        <h3>Why This System Works</h3>
+        <hr />
+
+        <h3>Why This System Works:</h3>
         <div class="why-system-works">
           <h4 onclick="toggleSection('section1')">🔍 Clear and Balanced Differentiation
             <span id="chevron-section1" class="chevron right"></span>
@@ -75,14 +77,111 @@
             behind the rankings, enhancing their engagement and making the games more exciting to follow.</p>
         </div>
 
-        <h3>Conclusion</h3>
+        <hr />
+
+        <h3>Medal Scoring Scenarios:</h3>
+        <div class="logical-examples">
+          <h4 onclick="toggleSection('example1')">Example 1: Balanced Medal Distribution
+            <span id="chevron-example1" class="chevron right"></span>
+          </h4>
+          <div id="example1" class="collapsible-content">
+            <p>
+              <strong>Country A:</strong><br>
+              🥇 3 Gold (75 points)<br>
+              🥈 6 Silver (60 points)<br>
+              🥉 7 Bronze (28 points)<br>
+              <strong>Total:</strong> 163 points
+            </p>
+            <p>
+              <strong>Country B:</strong><br>
+              🥇 5 Gold (125 points)<br>
+              🥈 2 Silver (20 points)<br>
+              🥉 1 Bronze (4 points)<br>
+              <strong>Total:</strong> 149 points
+            </p>
+            <p>
+              Despite having fewer gold medals, Country A's balanced medal haul allows them to surpass Country B in
+              total points, showcasing the importance of overall performance.
+            </p>
+          </div>
+
+          <h4 onclick="toggleSection('example2')">Example 2: Dominance in Silver and Bronze
+            <span id="chevron-example2" class="chevron right"></span>
+          </h4>
+          <div id="example2" class="collapsible-content">
+            <p>
+              <strong>Country C:</strong><br>
+              🥇 2 Gold (50 points)<br>
+              🥈 8 Silver (80 points)<br>
+              🥉 9 Bronze (36 points)<br>
+              <strong>Total:</strong> 166 points
+            </p>
+            <p>
+              <strong>Country D:</strong><br>
+              🥇 6 Gold (150 points)<br>
+              🥈 1 Silver (10 points)<br>
+              🥉 2 Bronze (8 points)<br>
+              <strong>Total:</strong> 168 points
+            </p>
+            <p>
+              Here, Country C closely trails Country D by leveraging a high count of silver and bronze medals,
+              highlighting how consistent performance across different medal types can nearly match a gold-heavy tally.
+            </p>
+          </div>
+
+          <h4 onclick="toggleSection('example3')">Example 3: Minimal Golds, High Total Points
+            <span id="chevron-example3" class="chevron right"></span>
+          </h4>
+          <div id="example3" class="collapsible-content">
+            <p>
+              <strong>Country E:</strong><br>
+              🥇 1 Gold (25 points)<br>
+              🥈 10 Silver (100 points)<br>
+              🥉 12 Bronze (48 points)<br>
+              <strong>Total:</strong> 173 points
+            </p>
+            <p>
+              <strong>Country F:</strong><br>
+              🥇 7 Gold (175 points)<br>
+              🥈 0 Silver (0 points)<br>
+              🥉 1 Bronze (4 points)<br>
+              <strong>Total:</strong> 179 points
+            </p>
+            <p>
+              Country E demonstrates that a country can accumulate a significant total score by excelling in silver and
+              bronze medals, staying competitive with a country having many golds but fewer overall medals.
+            </p>
+          </div>
+        </div>
+
+        <hr />
+        <h3>Conclusion:</h3>
         <p>My points system celebrates all victories, giving the highest achievements their due recognition. It
           motivates athletes, rewards comprehensive excellence, and enhances viewer engagement. Let's support a system
-          that truly embodies the spirit of athletic excellence and fair play! 🌟</p>
+          that truly embodies the spirit of athletic excellence and fair play! 🌟
+        </p>
+        <p>If you appreciate my work, please consider supporting me on Ko-fi. Your contributions help me continue
+        to fuel my passion for creating fun and innovative projects like this tracker. Thank you! 🙏
+        </p>
+        <center>
+          <p>
+            <script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script>
+            <script
+              type='text/javascript'>kofiwidget2.init('Support Me on Ko-fi', '#29abe0', 'K3K011ENL6'); kofiwidget2.draw();</script>
+          </p>
+        </center>
+        
       </div>
     </div>
 
     <h2>Current Medal Rankings</h2>
+    <div id="legend" class="legend">
+      <p>Legend:
+        <span class="nowrap">🥇 Gold: 25 points</span> |
+        <span class="nowrap">🥈 Silver: 10 points</span> |
+        <span class="nowrap">🥉 Bronze: 4 points</span>
+      </p>
+    </div>
     <div id="loading-spinner" class="spinner" style="display: none;"></div>
     <table>
       <thead>
@@ -104,15 +203,22 @@
 
   <footer>
     <div class="credits">
-      <p>Website by Alex Moss. Data provided by the unofficial <a href="https://github.com/kevle1/paris-2024-olympic-api"
-          target="_blank">Paris 2024 Olympic Medals API</a>. Follow me on <a href="https://github.com/kuthedk"
-          target="_blank">GitHub</a> and <a href="https://www.threads.net/@kuthedk" target="_blank">Threads</a>.</p>
+      <p>Website by Alex Moss. Data provided by the unofficial <a
+          href="https://github.com/kevle1/paris-2024-olympic-api" target="_blank">Paris 2024 Olympic Medals API</a>.
+        Follow me on <a href="https://github.com/kuthedk" target="_blank">GitHub</a> and <a
+          href="https://www.threads.net/@kuthedk" target="_blank">Threads</a>.</p>
       <p>All trademarks, data, and other relevant properties are the copyright and property of the International Olympic
         Committee (IOC). No claims are made to these properties.</p>
       <p>&copy; 2024 Alex Moss. All Rights Reserved.</p>
+      <br>
+      <p>If you appreciate my work, please consider supporting me on Ko-fi. Your contributions help me continue
+      to fuel my passion for creating fun and innovative projects like this tracker. Thank you! 🙏</p>
+      <p>
+        <script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script>
+        <script
+          type='text/javascript'>kofiwidget2.init('Support Me on Ko-fi', '#29abe0', 'K3K011ENL6'); kofiwidget2.draw();</script>
+      </p>
     </div>
   </footer>
 
 </body>
-
-</html>

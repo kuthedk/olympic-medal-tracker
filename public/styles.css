@@ -140,6 +140,10 @@ td.light-mode {
   vertical-align: middle;
 }
 
+.nowrap {
+  white-space: nowrap;
+}
+
 .toggle-container {
   display: flex;
   align-items: center;
