@@ -24,13 +24,25 @@ document.getElementById('dark-mode-toggle').addEventListener('change', toggleDar
 
   const medalData = await fetchMedalData();
   const rankedData = calculatePoints(medalData);
-  renderTable(rankedData);
+async function initialize() {
+  showSpinner(true);
+  try {
+    const [medalData, populationData] = await fetchData();
+    const rankedData = calculatePoints(medalData, populationData, false);
+    renderTable(rankedData, false);
+  } catch (error) {
+    showError('Error fetching data. Please try again later.');
+  } finally {
+    showSpinner(false);
+  }
+}
 
-  spinner.style.display = 'none'; // Hide the spinner
-  table.classList.remove('hidden'); // Show the table
-})();
+async function fetchData() {
+  const [medalData, populationData] = await Promise.all([fetchMedalData(), fetchPopulationData()]);
+  return [medalData, populationData];
+}
 
-export async function fetchMedalData() {
+async function fetchMedalData() {
   try {
     const response = await fetch('https://api.olympics.kevle.xyz/medals');
     const data = await response.json();
@@ -48,7 +60,7 @@ export async function fetchMedalData() {
   }
 }
 
-export async function fetchCountryFlags() {
+async function fetchCountryFlags() {
   try {
     const response = await fetch('https://restcountries.com/v3.1/all');
     const data = await response.json();
@@ -64,16 +76,71 @@ export async function fetchCountryFlags() {
   }
 }
 
-export function calculatePoints(data) {
-  return data.map(entry => ({
-    ...entry,
-    points: entry.gold * 25 + entry.silver * 10 + entry.bronze * 4
-  })).sort((a, b) => b.points - a.points);
+async function fetchPopulationData() {
+  try {
+    const response = await fetch('https://restcountries.com/v3.1/all');
+    const data = await response.json();
+    return data.reduce((acc, country) => {
+      acc[country.name.common] = country.population;
+      return acc;
+    }, {});
+  } catch (error) {
+    console.error('Error fetching population data:', error);
+    return {};
+  }
 }
 
-function renderTable(data) {
+function calculatePoints(data, populationData, usePopulationWeight = false) {
+  const populations = Object.values(populationData).sort((a, b) => a - b);
+  const medianPopulation = populations[Math.floor(populations.length / 2)];
+
+  return data.map(entry => {
+    const basePoints = entry.gold * 25 + entry.silver * 10 + entry.bronze * 4;
+    const population = populationData[entry.country];
+
+    if (!population) {
+      return null;
+    }
+
+    const populationFactor = population / medianPopulation;
+    const points = usePopulationWeight ? basePoints / populationFactor : basePoints;
+
+    return {
+      ...entry,
+      points: usePopulationWeight ? points.toFixed(2) : Math.round(points),
+      population: usePopulationWeight ? formatPopulation(population) : null,
+      populationFactor: usePopulationWeight ? populationFactor.toFixed(2) : null
+    };
+  }).filter(entry => entry !== null)
+    .sort((a, b) => b.points - a.points);
+}
+
+function formatPopulation(population) {
+  if (population >= 1e9) {
+    return (population / 1e9).toFixed(1) + 'B';
+  } else if (population >= 1e6) {
+    return (population / 1e6).toFixed(1) + 'M';
+  } else if (population >= 1e3) {
+    return (population / 1e3).toFixed(1) + 'K';
+  } else {
+    return population.toString();
+  }
+}
+
+function renderTable(data, usePopulationWeight) {
   const tableBody = document.getElementById("medal-table");
+  const populationHeader = document.querySelector(".population-header");
+  const populationFactorHeader = document.querySelector(".population-factor-header");
+
   tableBody.innerHTML = "";
+  if (usePopulationWeight) {
+    populationHeader.classList.remove('hidden');
+    populationFactorHeader.classList.remove('hidden');
+  } else {
+    populationHeader.classList.add('hidden');
+    populationFactorHeader.classList.add('hidden');
+  }
+
   data.forEach((entry, index) => {
     const row = `<tr class="${document.body.classList.contains('light-mode') ? 'light-mode' : ''}">
       <td>${index + 1}</td>
@@ -82,42 +149,27 @@ function renderTable(data) {
       <td>${entry.silver}</td>
       <td>${entry.bronze}</td>
       <td>${entry.points}</td>
+      ${usePopulationWeight ? `<td>${entry.population}</td><td>${entry.populationFactor}</td>` : ''}
     </tr>`;
     tableBody.innerHTML += row;
   });
 }
 
-window.calculatePoints = calculatePoints;
-window.fetchMedalData = fetchMedalData;
-window.fetchCountryFlags = fetchCountryFlags;
-window.renderTable = renderTable;
-
-window.toggleDescription = function toggleDescription() {
-  const content = document.getElementById('description-content');
-  const chevron = document.getElementById('chevron');
-  if (content.style.display === 'none' || content.style.display === '') {
-    content.style.display = 'block';
-    chevron.classList.remove('right');
-    chevron.classList.add('down');
+function showSpinner(show) {
+  const spinner = document.getElementById('loading-spinner');
+  const table = document.querySelector('table');
+  if (show) {
+    table.classList.add('hidden');
+    spinner.style.display = 'block';
   } else {
-    content.style.display = 'none';
-    chevron.classList.remove('down');
-    chevron.classList.add('right');
+    spinner.style.display = 'none';
+    table.classList.remove('hidden');
   }
 }
 
-window.toggleSection = function toggleSection(id) {
-  const section = document.getElementById(id);
-  const chevron = document.getElementById(`chevron-${id}`);
-  if (section.classList.contains('active')) {
-    section.classList.remove('active');
-    chevron.classList.remove('down');
-    chevron.classList.add('right');
-  } else {
-    section.classList.add('active');
-    chevron.classList.remove('right');
-    chevron.classList.add('down');
-  }
+function showError(message) {
+  const tableBody = document.getElementById("medal-table");
+  tableBody.innerHTML = `<tr><td colspan="8">${message}</td></tr>`;
 }
 
 function toggleDarkMode() {
@@ -128,10 +180,10 @@ function toggleDarkMode() {
     document.querySelector('.description'),
     document.querySelector('.credits')
   ];
-  
+
   elementsToToggle.forEach(el => el.classList.toggle('dark-mode'));
   elementsToToggle.forEach(el => el.classList.toggle('light-mode'));
-  
+
   document.querySelectorAll('th').forEach(th => {
     th.classList.toggle('dark-mode');
     th.classList.toggle('light-mode');
@@ -144,3 +196,44 @@ function toggleDarkMode() {
     td.classList.toggle('light-mode');
   });
 }
+
+function toggleAlvieMode(usePopulationWeight) {
+  (async function () {
+    showSpinner(true);
+    try {
+      const [medalData, populationData] = await fetchData();
+      const rankedData = calculatePoints(medalData, populationData, usePopulationWeight);
+      renderTable(rankedData, usePopulationWeight);
+    } catch (error) {
+      showError('Error fetching data. Please try again later.');
+    } finally {
+      showSpinner(false);
+    }
+  })();
+}
+
+window.calculatePoints = calculatePoints;
+window.fetchMedalData = fetchMedalData;
+window.fetchCountryFlags = fetchCountryFlags;
+window.renderTable = renderTable;
+window.fetchPopulationData = fetchPopulationData;
+
+window.toggleDescription = function toggleDescription() {
+  const content = document.getElementById('description-content');
+  const chevron = document.getElementById('chevron');
+  const isHidden = content.style.display === 'none' || content.style.display === '';
+  content.style.display = isHidden ? 'block' : 'none';
+  chevron.classList.toggle('right', !isHidden);
+  chevron.classList.toggle('down', isHidden);
+};
+
+window.toggleSection = function toggleSection(id) {
+  const section = document.getElementById(id);
+  const chevron = document.getElementById(`chevron-${id}`);
+  const isActive = section.classList.contains('active');
+  section.classList.toggle('active', !isActive);
+  chevron.classList.toggle('right', isActive);
+  chevron.classList.toggle('down', !isActive);
+};
+
+initialize();
