@@ -38,9 +38,7 @@
           <li>4 points for bronze 🥉</li>
         </ul>
         <p>This 2.5x pattern ensures a balanced and accurate reflection of athletic achievements.</p>
-
         <hr />
-
         <h3>Why This System Works:</h3>
         <div class="why-system-works">
           <h4 onclick="toggleSection('section1')">🔍 Clear and Balanced Differentiation
@@ -80,9 +78,7 @@
             understand, making the competition more transparent and enjoyable. Fans can easily grasp the rationale
             behind the rankings, enhancing their engagement and making the games more exciting to follow.</p>
         </div>
-
         <hr />
-
         <h3>Medal Scoring Scenarios:</h3>
         <div class="logical-examples">
           <h4 onclick="toggleSection('example1')">Example 1: Balanced Medal Distribution
@@ -157,7 +153,6 @@
             </p>
           </div>
         </div>
-
         <hr />
         <h3>Conclusion:</h3>
         <p>My points system celebrates all victories, giving the highest achievements their due recognition. It
@@ -183,23 +178,26 @@
       </p>
     </div>
     <div id="loading-spinner" class="spinner" style="display: none;"></div>
-    <table>
-      <thead>
-        <tr>
-          <th>Rank</th>
-          <th>Country</th>
-          <th>Gold</th>
-          <th>Silver</th>
-          <th>Bronze</th>
-          <th>Total Points</th>
-          <th class="population-header hidden">Population</th>
-          <th class="population-factor-header hidden">Population Factor</th>
-        </tr>
-      </thead>
-      <tbody id="medal-table">
-        <!-- Medal data will be inserted here by JavaScript -->
-      </tbody>
-    </table>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Country</th>
+            <th>Gold</th>
+            <th>Silver</th>
+            <th>Bronze</th>
+            <th>Total Points</th>
+            <th class="population-header hidden">Population</th>
+            <th class="population-factor-header hidden">Population Factor</th>
+            <th class="adjusted-points-header hidden">Alvie Adjusted Points</th>
+          </tr>
+        </thead>
+        <tbody id="medal-table">
+          <!-- Medal data will be inserted here by JavaScript -->
+        </tbody>
+      </table>
+    </div>
   </main>
   <footer>
     <div class="credits">

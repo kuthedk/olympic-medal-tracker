@@ -15,20 +15,17 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
 document.getElementById('dark-mode-toggle').addEventListener('change', toggleDarkMode);
+document.getElementById('alvie-mode-toggle').addEventListener('change', function () {
+  const usePopulationWeight = this.checked;
+  toggleAlvieMode(usePopulationWeight);
+});
 
-(async function () {
-  const spinner = document.getElementById('loading-spinner');
-  const table = document.querySelector('table');
-  table.classList.add('hidden'); // Hide the table initially
-  spinner.style.display = 'block'; // Show the spinner
-
-  const medalData = await fetchMedalData();
-  const rankedData = calculatePoints(medalData);
 async function initialize() {
   showSpinner(true);
   try {
     const [medalData, populationData] = await fetchData();
-    const rankedData = calculatePoints(medalData, populationData, false);
+    const globalPopulation = calculateGlobalPopulation(populationData);
+    const rankedData = calculatePoints(medalData, populationData, globalPopulation, false);
     renderTable(rankedData, false);
   } catch (error) {
     showError('Error fetching data. Please try again later.');
@@ -90,29 +87,12 @@ async function fetchPopulationData() {
   }
 }
 
-function calculatePoints(data, populationData, usePopulationWeight = false) {
-  const populations = Object.values(populationData).sort((a, b) => a - b);
-  const medianPopulation = populations[Math.floor(populations.length / 2)];
+function calculateGlobalPopulation(populationData) {
+  return Object.values(populationData).reduce((sum, population) => sum + population, 0);
+}
 
-  return data.map(entry => {
-    const basePoints = entry.gold * 25 + entry.silver * 10 + entry.bronze * 4;
-    const population = populationData[entry.country];
-
-    if (!population) {
-      return null;
-    }
-
-    const populationFactor = population / medianPopulation;
-    const points = usePopulationWeight ? basePoints / populationFactor : basePoints;
-
-    return {
-      ...entry,
-      points: usePopulationWeight ? points.toFixed(2) : Math.round(points),
-      population: usePopulationWeight ? formatPopulation(population) : null,
-      populationFactor: usePopulationWeight ? populationFactor.toFixed(2) : null
-    };
-  }).filter(entry => entry !== null)
-    .sort((a, b) => b.points - a.points);
+function formatNumberWithSeparator(number) {
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 function formatPopulation(population) {
@@ -127,29 +107,62 @@ function formatPopulation(population) {
   }
 }
 
+function calculatePoints(data, populationData, globalPopulation, usePopulationWeight = false) {
+  return data.map(entry => {
+    const basePoints = entry.gold * 25 + entry.silver * 10 + entry.bronze * 4;
+    const population = populationData[entry.country];
+
+    if (!population) {
+      return null;
+    }
+
+    // Calculate population proportion
+    const populationProportion = population / globalPopulation;
+    const adjustedPoints = basePoints / populationProportion;
+
+    return {
+      ...entry,
+      points: formatNumberWithSeparator(Math.round(basePoints)),
+      adjustedPoints: usePopulationWeight ? formatNumberWithSeparator(adjustedPoints.toFixed(2)) : null,
+      population: usePopulationWeight ? formatPopulation(population) : null,
+      populationProportion: usePopulationWeight ? populationProportion.toFixed(5) : null
+    };
+  }).filter(entry => entry !== null)
+    .sort((a, b) => {
+      if (usePopulationWeight) {
+        return parseFloat(b.adjustedPoints.replace(/,/g, '')) - parseFloat(a.adjustedPoints.replace(/,/g, ''));
+      } else {
+        return parseInt(b.points.replace(/,/g, '')) - parseInt(a.points.replace(/,/g, ''));
+      }
+    });
+}
+
 function renderTable(data, usePopulationWeight) {
   const tableBody = document.getElementById("medal-table");
   const populationHeader = document.querySelector(".population-header");
   const populationFactorHeader = document.querySelector(".population-factor-header");
+  const adjustedPointsHeader = document.querySelector(".adjusted-points-header");
 
   tableBody.innerHTML = "";
   if (usePopulationWeight) {
     populationHeader.classList.remove('hidden');
     populationFactorHeader.classList.remove('hidden');
+    adjustedPointsHeader.classList.remove('hidden');
   } else {
     populationHeader.classList.add('hidden');
     populationFactorHeader.classList.add('hidden');
+    adjustedPointsHeader.classList.add('hidden');
   }
 
   data.forEach((entry, index) => {
     const row = `<tr class="${document.body.classList.contains('light-mode') ? 'light-mode' : ''}">
       <td>${index + 1}</td>
       <td>${entry.country} ${entry.flag ? `<img src="${entry.flag}" alt="${entry.country} flag" class="flag">` : ''}</td>
-      <td>${entry.gold}</td>
-      <td>${entry.silver}</td>
-      <td>${entry.bronze}</td>
+      <td>${formatNumberWithSeparator(entry.gold)}</td>
+      <td>${formatNumberWithSeparator(entry.silver)}</td>
+      <td>${formatNumberWithSeparator(entry.bronze)}</td>
       <td>${entry.points}</td>
-      ${usePopulationWeight ? `<td>${entry.population}</td><td>${entry.populationFactor}</td>` : ''}
+      ${usePopulationWeight ? `<td>${entry.population}</td><td>${entry.populationProportion}</td><td>${entry.adjustedPoints}</td>` : ''}
     </tr>`;
     tableBody.innerHTML += row;
   });
@@ -202,7 +215,8 @@ function toggleAlvieMode(usePopulationWeight) {
     showSpinner(true);
     try {
       const [medalData, populationData] = await fetchData();
-      const rankedData = calculatePoints(medalData, populationData, usePopulationWeight);
+      const globalPopulation = calculateGlobalPopulation(populationData);
+      const rankedData = calculatePoints(medalData, populationData, globalPopulation, usePopulationWeight);
       renderTable(rankedData, usePopulationWeight);
     } catch (error) {
       showError('Error fetching data. Please try again later.');
