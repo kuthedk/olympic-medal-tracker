@@ -109,13 +109,6 @@ export async function fetchPopulationData() {
       }
     });
 
-    // console.log("Sample Population Data:", {
-    //   USA: populationData["US"], // Log population for the USA
-    //   China: populationData["CN"], // Log population for China
-    //   India: populationData["IN"], // Log population for India
-    //   GlobalSample: Object.values(populationData).slice(0, 5) // Log first 5 entries as a sample
-    // });
-
     return populationData;
   } catch (error) {
     console.error('Error fetching population data:', error);
@@ -123,19 +116,16 @@ export async function fetchPopulationData() {
   }
 }
 
+export function calculateGlobalPopulationPercentage(countryPopulation, globalPopulation) {
+  const percentage = (countryPopulation / globalPopulation) * 100;
 
-
-export function calculatePopulationFactor(countryPopulation, globalPopulation) {
-  const factor = countryPopulation / globalPopulation;
-
-  // If the factor is very small, use scientific notation or more decimal places
-  if (factor < 0.0001) {
-    return factor.toExponential(4); // Use scientific notation with 4 decimal places
+  // If the percentage is very small, use scientific notation or more decimal places
+  if (percentage < 0.0001) {
+    return percentage.toExponential(4); // Use scientific notation with 4 decimal places
   } else {
-    return factor.toFixed(4); // Use fixed-point notation for larger values
+    return percentage.toFixed(4); // Use fixed-point notation for larger values
   }
 }
-
 
 export function formatPopulation(population) {
   if (population >= 1e9) {
@@ -161,13 +151,13 @@ export async function adjustScoresForPopulation(data) {
       countryPopulation = 37; // Set EOR population to 37
     }
 
-    const populationFactor = calculatePopulationFactor(countryPopulation, globalPopulation);
-    const adjustedScore = entry.points / populationFactor; // Numerical score for sorting
+    const globalPopulationPercentage = calculateGlobalPopulationPercentage(countryPopulation, globalPopulation);
+    const adjustedScore = entry.points / (globalPopulationPercentage / 100); // Adjusted score for sorting
 
     return {
       ...entry,
       population: formatPopulation(countryPopulation),
-      populationFactor,
+      globalPopulationPercentage,
       adjustedScore, // Keep this for sorting
       formattedAdjustedScore: adjustedScore.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","), // Format for display
     };
@@ -197,7 +187,7 @@ function renderTable(data, isAlvieMode = false) {
       <td>${entry.silver.toLocaleString()}</td>
       <td>${entry.bronze.toLocaleString()}</td>
       <td>${entry.points.toLocaleString()}</td>
-      ${isAlvieMode ? `<td>${entry.population}</td><td>${entry.populationFactor}</td><td>${entry.formattedAdjustedScore}</td>` : ''}
+      ${isAlvieMode ? `<td>${entry.population}</td><td>${entry.globalPopulationPercentage}%</td><td>${entry.formattedAdjustedScore}</td>` : ''}
     </tr>`;
     tableBody.innerHTML += row;
   });
@@ -255,7 +245,6 @@ window.toggleSection = function toggleSection(id) {
     chevron.classList.add('right');
   } else {
     section.classList.add('active');
-    chevron.classList.remove('right');
     chevron.classList.add('down');
   }
 }
