@@ -193,6 +193,35 @@ function renderTable(data, isAlvieMode = false) {
   });
 }
 
+// Modal functionality
+document.getElementById('tooltip-trigger').addEventListener('click', openModal);
+
+function openModal() {
+  document.getElementById("alvieModal").style.display = "block";
+}
+
+function closeModal() {
+  document.getElementById("alvieModal").style.display = "none";
+}
+
+// Make closeModal accessible globally
+window.closeModal = closeModal;
+
+// Close the modal when the user clicks outside of it
+window.onclick = function(event) {
+  const modal = document.getElementById("alvieModal");
+  if (event.target == modal) {
+    closeModal(); // Ensures the same function is used to close the modal
+  }
+};
+
+// Ensure accessibility: close modal with Escape key
+document.addEventListener('keydown', function(event) {
+  if (event.key === "Escape") {
+    closeModal();
+  }
+});
+
 function toggleDarkMode() {
   const elementsToToggle = [
     document.body,

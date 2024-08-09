@@ -6,6 +6,8 @@ body {
   color: #fff;
   text-align: center;
   transition: background-color 0.3s, color 0.3s;
+  overflow-x: hidden;
+  /* Prevent horizontal scrolling */
 }
 
 body.light-mode {
@@ -32,12 +34,12 @@ header.light-mode {
 .container {
   max-width: 100%;
   overflow-x: auto;
-  /* Allow horizontal scrolling */
   padding: 20px;
   background-color: #444;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  transition: background-color 0.3s, color 0.3s;
+  margin: 0 auto;
+  /* Center the container */
 }
 
 .container.light-mode {
@@ -108,10 +110,8 @@ td {
 th,
 td {
   padding: 8px;
-  /* Reduced padding for smaller screens */
   text-align: center;
   white-space: nowrap;
-  /* Prevents text from wrapping */
 }
 
 th {
@@ -159,6 +159,11 @@ td.light-mode {
   margin-right: 10px;
 }
 
+/* Added spacing between toggles */
+.toggle-container .toggle+.toggle-label {
+  margin-left: 20px;
+}
+
 .toggle {
   position: relative;
   width: 50px;
@@ -192,6 +197,114 @@ td.light-mode {
   left: 28px;
 }
 
+/* Tooltip styles */
+.tooltip {
+  position: relative;
+  display: inline-block;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.tooltip .fa-info-circle {
+  color: #ffcc00;
+  /* Gold color */
+  font-size: 18px;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 150px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-left: 0;
+  opacity: 0;
+  transition: opacity 0.3s;
+  white-space: nowrap;
+}
+
+.tooltip:hover .tooltiptext,
+.tooltip:focus .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Responsive Tooltip */
+@media (max-width: 768px) {
+  .tooltip .tooltiptext {
+    width: auto;
+    max-width: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+/* Modal styles */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+  /* Black with opacity */
+}
+
+.modal-content {
+  background-color: #333;
+  margin: 10% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 500px;
+  color: #fff;
+  border-radius: 8px;
+  box-sizing: border-box;
+  position: relative;
+  /* Allow proper positioning of the close button */
+}
+
+.modal-content .close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  color: #aaa;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.modal-content .close:hover,
+.modal-content .close:focus {
+  color: #fff;
+}
+
+/* Responsive Modal */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 90%;
+    /* Increase width on smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    width: 95%;
+    /* Further increase width for very small screens */
+    padding: 15px;
+    /* Adjust padding to fit better on small screens */
+  }
+}
+
 .credits {
   margin-top: 20px;
   font-size: 14px;
@@ -222,14 +335,11 @@ td.light-mode {
 .collapsible-content.active {
   display: block;
   max-height: 1000px;
-  /* large value to ensure expansion */
 }
 
 .spinner {
   border: 16px solid #f3f3f3;
-  /* Light grey */
   border-top: 16px solid #3498db;
-  /* Blue */
   border-radius: 50%;
   width: 120px;
   height: 120px;
