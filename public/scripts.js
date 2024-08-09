@@ -17,18 +17,36 @@ const analytics = getAnalytics(app);
 document.getElementById('dark-mode-toggle').addEventListener('change', toggleDarkMode);
 
 (async function () {
-  const spinner = document.getElementById('loading-spinner');
-  const table = document.querySelector('table');
-  table.classList.add('hidden'); // Hide the table initially
-  spinner.style.display = 'block'; // Show the spinner
+  const cachedMedalData = getDataFromLocalStorage('medalData');
+  if (cachedMedalData) {
+    renderTable(calculatePoints(cachedMedalData));
+  } else {
+    const spinner = document.getElementById('loading-spinner');
+    const table = document.querySelector('table');
+    table.classList.add('hidden'); // Hide the table initially
+    spinner.style.display = 'block'; // Show the spinner
 
-  const medalData = await fetchMedalData();
-  const rankedData = calculatePoints(medalData);
-  renderTable(rankedData);
+    const medalData = await fetchMedalData();
+    saveDataToLocalStorage('medalData', medalData);
+    renderTable(calculatePoints(medalData));
 
-  spinner.style.display = 'none'; // Hide the spinner
-  table.classList.remove('hidden'); // Show the table
+    spinner.style.display = 'none'; // Hide the spinner
+    table.classList.remove('hidden'); // Show the table
+  }
 })();
+
+function saveDataToLocalStorage(key, data) {
+  const expiry = Date.now() + 60000; // 1-minute expiry
+  localStorage.setItem(key, JSON.stringify({ data, expiry }));
+}
+
+function getDataFromLocalStorage(key) {
+  const cachedData = JSON.parse(localStorage.getItem(key));
+  if (cachedData && cachedData.expiry > Date.now()) {
+    return cachedData.data;
+  }
+  return null;
+}
 
 export async function fetchMedalData() {
   try {
