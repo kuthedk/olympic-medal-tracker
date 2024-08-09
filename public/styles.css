@@ -30,8 +30,9 @@ header.light-mode {
 }
 
 .container {
-  max-width: 1000px;
-  margin: auto;
+  max-width: 100%;
+  overflow-x: auto;
+  /* Allow horizontal scrolling */
   padding: 20px;
   background-color: #444;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -106,9 +107,11 @@ td {
 
 th,
 td {
-  padding: 12px;
+  padding: 8px;
+  /* Reduced padding for smaller screens */
   text-align: center;
-  color: #fff;
+  white-space: nowrap;
+  /* Prevents text from wrapping */
 }
 
 th {
@@ -249,28 +252,14 @@ td.light-mode {
 }
 
 @media (max-width: 768px) {
-  .toggle-container {
-    top: 10px;
-    right: 10px;
+
+  td,
+  th {
+    padding: 4px;
   }
 
-  header h1 {
-    font-size: 1.5em;
-    padding: 10px 0;
-  }
-
-  .container {
-    padding: 10px;
-  }
-
-  .description h2 {
-    font-size: 1.2em;
-  }
-
-  table,
-  th,
-  td {
-    font-size: 12px;
+  table {
+    font-size: 14px;
   }
 
   .flag {

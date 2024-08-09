@@ -2,13 +2,13 @@
 <html lang="en">
 
 <head>
-  
-    <meta charset="UTF-8">
-    <meta name="description" content="Kuthedk's Olympic Medal Points System">
-    <meta name="keywords" content="Olympics, Medal, Points System, Sports, Ranking">
-    <meta property="og:title" content="Kuthedk's Olympic Medal Points System">
-    <meta property="og:description" content="A balanced and engaging Olympic medal points system.">
-    
+
+  <meta charset="UTF-8">
+  <meta name="description" content="Kuthedk's Olympic Medal Points System">
+  <meta name="keywords" content="Olympics, Medal, Points System, Sports, Ranking">
+  <meta property="og:title" content="Kuthedk's Olympic Medal Points System">
+  <meta property="og:description" content="A balanced and engaging Olympic medal points system.">
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kuthedk's Olympic Medal Points System</title>
   <link rel="stylesheet" href="styles.css">
@@ -22,6 +22,8 @@
     <div class="toggle-container">
       <span class="toggle-label">Dark Mode</span>
       <input type="checkbox" id="dark-mode-toggle" class="toggle" checked>
+      <span class="toggle-label">Alvie Mode</span>
+      <input type="checkbox" id="alvie-mode-toggle" class="toggle">
     </div>
   </header>
 
@@ -167,7 +169,7 @@
           that truly embodies the spirit of athletic excellence and fair play! 🌟
         </p>
         <p>If you appreciate my work, please consider supporting me on Ko-fi. Your contributions help me continue
-        to fuel my passion for creating fun and innovative projects like this tracker. Thank you! 🙏
+          to fuel my passion for creating fun and innovative projects like this tracker. Thank you! 🙏
         </p>
         <center>
           <p>
@@ -176,7 +178,7 @@
               type='text/javascript'>kofiwidget2.init('Support Me on Ko-fi', '#29abe0', 'K3K011ENL6'); kofiwidget2.draw();</script>
           </p>
         </center>
-        
+
       </div>
     </div>
 
@@ -198,6 +200,9 @@
           <th>Silver</th>
           <th>Bronze</th>
           <th>Total Points</th>
+          <th id="population-header" style="display:none;">Population</th>
+          <th id="population-factor-header" style="display:none;">Population Factor</th>
+          <th id="adjusted-score-header" style="display:none;">Adjusted Score</th>
         </tr>
       </thead>
       <tbody id="medal-table">
@@ -218,7 +223,7 @@
       <p>&copy; 2024 Alex Moss. All Rights Reserved.</p>
       <br>
       <p>If you appreciate my work, please consider supporting me on Ko-fi. Your contributions help me continue
-      to fuel my passion for creating fun and innovative projects like this tracker. Thank you! 🙏</p>
+        to fuel my passion for creating fun and innovative projects like this tracker. Thank you! 🙏</p>
       <p>
         <script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script>
         <script
@@ -228,3 +233,5 @@
   </footer>
 
 </body>
+
+</html>

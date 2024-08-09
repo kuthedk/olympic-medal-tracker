@@ -16,6 +16,13 @@ const analytics = getAnalytics(app);
 
 document.getElementById('dark-mode-toggle').addEventListener('change', toggleDarkMode);
 
+export function calculatePoints(data) {
+  return data.map(entry => ({
+    ...entry,
+    points: entry.gold * 25 + entry.silver * 10 + entry.bronze * 4
+  })).sort((a, b) => b.points - a.points);
+}
+
 (async function () {
   const cachedMedalData = getDataFromLocalStorage('medalData');
   if (cachedMedalData) {
@@ -55,6 +62,7 @@ export async function fetchMedalData() {
     const countryFlags = await fetchCountryFlags();
     return data.results.map(result => ({
       country: result.country.name,
+      countryCode: result.country.iso_alpha_2, // Use ISO Alpha-2 code for matching
       flag: countryFlags[result.country.iso_alpha_2] || countryFlags[result.country.iso_alpha_3] || countryFlags[result.country.code.toLowerCase()] || '',
       gold: result.medals.gold,
       silver: result.medals.silver,
@@ -82,16 +90,105 @@ export async function fetchCountryFlags() {
   }
 }
 
-export function calculatePoints(data) {
-  return data.map(entry => ({
-    ...entry,
-    points: entry.gold * 25 + entry.silver * 10 + entry.bronze * 4
-  })).sort((a, b) => b.points - a.points);
+export async function fetchPopulationData() {
+  try {
+    const response = await fetch('https://restcountries.com/v3.1/all');
+    const data = await response.json();
+    const populationData = {};
+
+    data.forEach(country => {
+      const code2 = country.cca2; // ISO Alpha-2 code
+      const code3 = country.cca3; // ISO Alpha-3 code
+      const population = country.population || 1; // Default to 1 if population is missing
+
+      // Use the ISO Alpha-2 code primarily, fall back to ISO Alpha-3 if necessary
+      if (!populationData[code2]) {
+        populationData[code2] = population;
+      } else if (!populationData[code3]) {
+        populationData[code3] = population;
+      }
+    });
+
+    // console.log("Sample Population Data:", {
+    //   USA: populationData["US"], // Log population for the USA
+    //   China: populationData["CN"], // Log population for China
+    //   India: populationData["IN"], // Log population for India
+    //   GlobalSample: Object.values(populationData).slice(0, 5) // Log first 5 entries as a sample
+    // });
+
+    return populationData;
+  } catch (error) {
+    console.error('Error fetching population data:', error);
+    return {};
+  }
 }
 
-function renderTable(data) {
+
+
+export function calculatePopulationFactor(countryPopulation, globalPopulation) {
+  const factor = countryPopulation / globalPopulation;
+
+  // If the factor is very small, use scientific notation or more decimal places
+  if (factor < 0.0001) {
+    return factor.toExponential(4); // Use scientific notation with 4 decimal places
+  } else {
+    return factor.toFixed(4); // Use fixed-point notation for larger values
+  }
+}
+
+
+export function formatPopulation(population) {
+  if (population >= 1e9) {
+    return (population / 1e9).toFixed(1) + 'B';
+  } else if (population >= 1e6) {
+    return (population / 1e6).toFixed(1) + 'M';
+  } else if (population >= 1e3) {
+    return (population / 1e3).toFixed(1) + 'K';
+  } else {
+    return population.toString();
+  }
+}
+
+export async function adjustScoresForPopulation(data) {
+  const populationData = await fetchPopulationData();
+  const globalPopulation = Object.values(populationData).reduce((acc, population) => acc + population, 0);
+
+  return data.map(entry => {
+    const countryCode = entry.countryCode;
+    let countryPopulation = populationData[countryCode] || 1;
+
+    if (entry.country === "EOR") {
+      countryPopulation = 37; // Set EOR population to 37
+    }
+
+    const populationFactor = calculatePopulationFactor(countryPopulation, globalPopulation);
+    const adjustedScore = entry.points / populationFactor; // Numerical score for sorting
+
+    return {
+      ...entry,
+      population: formatPopulation(countryPopulation),
+      populationFactor,
+      adjustedScore, // Keep this for sorting
+      formattedAdjustedScore: adjustedScore.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","), // Format for display
+    };
+  }).sort((a, b) => b.adjustedScore - a.adjustedScore); // Sort by numerical adjusted score
+}
+
+document.getElementById('alvie-mode-toggle').addEventListener('change', async function () {
+  const isAlvieMode = this.checked;
+  const medalData = await fetchMedalData();
+  const data = isAlvieMode ? await adjustScoresForPopulation(calculatePoints(medalData)) : calculatePoints(medalData);
+  renderTable(data, isAlvieMode);
+});
+
+function renderTable(data, isAlvieMode = false) {
   const tableBody = document.getElementById("medal-table");
   tableBody.innerHTML = "";
+
+  document.getElementById('population-header').style.display = isAlvieMode ? '' : 'none';
+  document.getElementById('population-factor-header').style.display = isAlvieMode ? '' : 'none';
+  document.getElementById('adjusted-score-header').style.display = isAlvieMode ? '' : 'none';
+
   data.forEach((entry, index) => {
     const row = `<tr class="${document.body.classList.contains('light-mode') ? 'light-mode' : ''}">
       <td>${index + 1}</td>
@@ -100,8 +197,34 @@ function renderTable(data) {
       <td>${entry.silver.toLocaleString()}</td>
       <td>${entry.bronze.toLocaleString()}</td>
       <td>${entry.points.toLocaleString()}</td>
+      ${isAlvieMode ? `<td>${entry.population}</td><td>${entry.populationFactor}</td><td>${entry.formattedAdjustedScore}</td>` : ''}
     </tr>`;
     tableBody.innerHTML += row;
+  });
+}
+
+function toggleDarkMode() {
+  const elementsToToggle = [
+    document.body,
+    document.querySelector('header'),
+    document.querySelector('.container'),
+    document.querySelector('.description'),
+    document.querySelector('.credits')
+  ];
+
+  elementsToToggle.forEach(el => el.classList.toggle('dark-mode'));
+  elementsToToggle.forEach(el => el.classList.toggle('light-mode'));
+
+  document.querySelectorAll('th').forEach(th => {
+    th.classList.toggle('dark-mode');
+    th.classList.toggle('light-mode');
+  });
+  document.querySelectorAll('tr:nth-child(even)').forEach(tr => {
+    tr.classList.toggle('dark-mode');
+    tr.classList.toggle('light-mode');
+  });
+  document.querySelectorAll('td').forEach(td => {
+    td.classList.toggle('light-mode');
   });
 }
 
@@ -109,7 +232,6 @@ window.calculatePoints = calculatePoints;
 window.fetchMedalData = fetchMedalData;
 window.fetchCountryFlags = fetchCountryFlags;
 window.renderTable = renderTable;
-
 window.toggleDescription = function toggleDescription() {
   const content = document.getElementById('description-content');
   const chevron = document.getElementById('chevron');
@@ -136,29 +258,4 @@ window.toggleSection = function toggleSection(id) {
     chevron.classList.remove('right');
     chevron.classList.add('down');
   }
-}
-
-function toggleDarkMode() {
-  const elementsToToggle = [
-    document.body,
-    document.querySelector('header'),
-    document.querySelector('.container'),
-    document.querySelector('.description'),
-    document.querySelector('.credits')
-  ];
-  
-  elementsToToggle.forEach(el => el.classList.toggle('dark-mode'));
-  elementsToToggle.forEach(el => el.classList.toggle('light-mode'));
-  
-  document.querySelectorAll('th').forEach(th => {
-    th.classList.toggle('dark-mode');
-    th.classList.toggle('light-mode');
-  });
-  document.querySelectorAll('tr:nth-child(even)').forEach(tr => {
-    tr.classList.toggle('dark-mode');
-    tr.classList.toggle('light-mode');
-  });
-  document.querySelectorAll('td').forEach(td => {
-    td.classList.toggle('light-mode');
-  });
 }
