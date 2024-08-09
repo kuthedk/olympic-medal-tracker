@@ -240,9 +240,9 @@ td.light-mode {
 @media (max-width: 768px) {
   .tooltip .tooltiptext {
     width: auto;
-    max-width: 120px;
+    /* max-width: 120px; */
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-100%);
   }
 }
 
