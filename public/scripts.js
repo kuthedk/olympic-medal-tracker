@@ -96,10 +96,10 @@ function renderTable(data) {
     const row = `<tr class="${document.body.classList.contains('light-mode') ? 'light-mode' : ''}">
       <td>${index + 1}</td>
       <td>${entry.country} ${entry.flag ? `<img src="${entry.flag}" alt="${entry.country} flag" class="flag">` : ''}</td>
-      <td>${entry.gold}</td>
-      <td>${entry.silver}</td>
-      <td>${entry.bronze}</td>
-      <td>${entry.points}</td>
+      <td>${entry.gold.toLocaleString()}</td>
+      <td>${entry.silver.toLocaleString()}</td>
+      <td>${entry.bronze.toLocaleString()}</td>
+      <td>${entry.points.toLocaleString()}</td>
     </tr>`;
     tableBody.innerHTML += row;
   });
