@@ -213,37 +213,67 @@ td.light-mode {
 
 .tooltip .tooltiptext {
   visibility: hidden;
-  width: 150px;
   background-color: #555;
   color: #fff;
-  text-align: center;
   border-radius: 5px;
-  padding: 5px 0;
+  padding: 5px;
   position: absolute;
   z-index: 1;
-  bottom: -35px;
-  left: 50%;
-  transform: translateX(-50%);
-  margin-left: 0;
+  top: 100%;
+  margin-top: 8px;
   opacity: 0;
-  transition: opacity 0.3s;
-  white-space: nowrap;
+  transition: opacity 0.3s ease-in-out;
+  white-space: normal;
+  text-align: left;
+  line-height: 1.4;
+  max-width: 300px;
+  /* Set a max-width to avoid overflow */
+  box-sizing: border-box;
 }
 
+/* Display tooltip on hover or focus */
 .tooltip:hover .tooltiptext,
 .tooltip:focus .tooltiptext {
   visibility: visible;
   opacity: 1;
 }
 
-/* Responsive Tooltip */
-@media (max-width: 768px) {
+/* Adjust tooltip position based on proximity to the right edge */
+.tooltip .tooltiptext {
+  left: 50%;
+  /* Default centering */
+  transform: translateX(-50%);
+}
+
+.tooltip-right {
+  transform: translateX(calc(-100% - 10px));
+  /* Align tooltip to the left of the icon */
+  right: 0;
+  left: auto;
+  /* Override left alignment */
+}
+
+@media (max-width: 600px) {
   .tooltip .tooltiptext {
-    width: auto;
-    /* max-width: 120px; */
+    max-width: calc(100vw - 20px);
+    /* Ensure tooltip fits on small screens */
     left: 50%;
-    transform: translateX(-100%);
+    transform: translateX(-50%);
   }
+}
+
+/* Arrow positioning */
+.tooltip .tooltiptext::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  /* Arrow should point up */
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent #555 transparent;
+  /* Arrow color */
 }
 
 /* Modal styles */
