@@ -10,26 +10,22 @@
 </head>
 
 <body class="dark-mode">
+
   <header>
     <h1>Kuthedk's Olympic Medal Points System</h1>
     <div class="toggle-container">
-      <div class="toggle-item">
-        <label for="dark-mode-toggle" class="toggle-label">Dark Mode</label>
-        <input type="checkbox" id="dark-mode-toggle" class="toggle" checked aria-label="Toggle Dark Mode">
-      </div>
-      <div class="toggle-item">
-        <label for="alvie-mode-toggle" class="toggle-label">Alvie Mode</label>
-        <input type="checkbox" id="alvie-mode-toggle" class="toggle" aria-label="Toggle Alvie Mode">
-      </div>
+      <span class="toggle-label">Dark Mode</span>
+      <input type="checkbox" id="dark-mode-toggle" class="toggle" checked>
     </div>
   </header>
-  <main class="container">
-    <section class="description">
-      <h2 onclick="toggleDescription()" aria-expanded="false">Why This Olympic Points System Shines: A Balanced Approach
-        to Medal Valuation
+
+  <div class="container">
+
+    <div class="description">
+      <h2 onclick="toggleDescription()">Why This Olympic Points System Shines: A Balanced Approach to Medal Valuation
         <span id="chevron" class="chevron right"></span>
       </h2>
-      <div id="description-content" class="hidden">
+      <div id="description-content" style="display: none;">
         <p>🎉 Welcome to my upgraded Olympic Points System! I believe every medal should be celebrated and valued
           fairly. My system awards points as follows:</p>
         <ul>
@@ -54,9 +50,9 @@
           <h4 onclick="toggleSection('section2')">🏅 Encourages Pursuit of Excellence
             <span id="chevron-section2" class="chevron right"></span>
           </h4>
-          <p id="section2" class="collapsible-content">My system motivates athletes to aim for the top! Gold medals hold
-            the most value, but winning any medal is highly rewarding. This drives athletes to push their limits and
-            perform their best across all events, promoting a culture of excellence and perseverance.</p>
+          <p id="section2" class="collapsible-content">My system motivates athletes to aim for the top! Gold medals
+            hold the most value, but winning any medal is highly rewarding. This drives athletes to push their limits
+            and perform their best across all events, promoting a culture of excellence and perseverance.</p>
 
           <h4 onclick="toggleSection('section3')">⚖️ Maintains Competitive Balance
             <span id="chevron-section3" class="chevron right"></span>
@@ -162,9 +158,11 @@
         <h3>Conclusion:</h3>
         <p>My points system celebrates all victories, giving the highest achievements their due recognition. It
           motivates athletes, rewards comprehensive excellence, and enhances viewer engagement. Let's support a system
-          that truly embodies the spirit of athletic excellence and fair play! 🌟</p>
-        <p>If you appreciate my work, please consider supporting me on Ko-fi. Your contributions help me continue to
-          fuel my passion for creating fun and innovative projects like this tracker. Thank you! 🙏</p>
+          that truly embodies the spirit of athletic excellence and fair play! 🌟
+        </p>
+        <p>If you appreciate my work, please consider supporting me on Ko-fi. Your contributions help me continue
+        to fuel my passion for creating fun and innovative projects like this tracker. Thank you! 🙏
+        </p>
         <center>
           <p>
             <script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script>
@@ -172,8 +170,10 @@
               type='text/javascript'>kofiwidget2.init('Support Me on Ko-fi', '#29abe0', 'K3K011ENL6'); kofiwidget2.draw();</script>
           </p>
         </center>
+        
       </div>
-    </section>
+    </div>
+
     <h2>Current Medal Rankings</h2>
     <div id="legend" class="legend">
       <p>Legend:
@@ -192,15 +192,15 @@
           <th>Silver</th>
           <th>Bronze</th>
           <th>Total Points</th>
-          <th class="population-header hidden">Population</th>
-          <th class="population-factor-header hidden">Population Factor</th>
         </tr>
       </thead>
       <tbody id="medal-table">
         <!-- Medal data will be inserted here by JavaScript -->
       </tbody>
     </table>
-  </main>
+
+  </div>
+
   <footer>
     <div class="credits">
       <p>Website by Alex Moss. Data provided by the unofficial <a
@@ -211,8 +211,8 @@
         Committee (IOC). No claims are made to these properties.</p>
       <p>&copy; 2024 Alex Moss. All Rights Reserved.</p>
       <br>
-      <p>If you appreciate my work, please consider supporting me on Ko-fi. Your contributions help me continue to fuel
-        my passion for creating fun and innovative projects like this tracker. Thank you! 🙏</p>
+      <p>If you appreciate my work, please consider supporting me on Ko-fi. Your contributions help me continue
+      to fuel my passion for creating fun and innovative projects like this tracker. Thank you! 🙏</p>
       <p>
         <script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script>
         <script
@@ -220,6 +220,5 @@
       </p>
     </div>
   </footer>
-</body>
 
-</html>
+</body>

@@ -1,24 +1,16 @@
-:root {
-  --background-color-dark: #333;
-  --background-color-light: #fff;
-  --text-color-dark: #fff;
-  --text-color-light: #000;
-  --highlight-color: #ffcc00;
-}
-
 body {
   font-family: 'Arial', sans-serif;
   margin: 0;
   padding: 0;
-  background-color: var(--background-color-dark);
-  color: var(--text-color-dark);
+  background-color: #333;
+  color: #fff;
   text-align: center;
   transition: background-color 0.3s, color 0.3s;
 }
 
 body.light-mode {
-  background-color: var(--background-color-light);
-  color: var(--text-color-light);
+  background-color: #fff;
+  color: #000;
 }
 
 header {
@@ -41,15 +33,15 @@ header.light-mode {
   max-width: 1000px;
   margin: auto;
   padding: 20px;
-  background-color: var(--background-color-dark);
+  background-color: #444;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   transition: background-color 0.3s, color 0.3s;
 }
 
 .container.light-mode {
-  background-color: var(--background-color-light);
-  color: var(--text-color-light);
+  background-color: #f4f4f4;
+  color: #000;
 }
 
 .description {
@@ -64,11 +56,11 @@ header.light-mode {
 
 .description.light-mode {
   background-color: #eaeaea;
-  color: var(--text-color-light);
+  color: #000;
 }
 
 .description h2 {
-  color: var(--highlight-color);
+  color: #ffcc00;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
@@ -80,7 +72,7 @@ header.light-mode {
 }
 
 .chevron {
-  border: solid var(--highlight-color);
+  border: solid #ffcc00;
   border-width: 0 3px 3px 0;
   display: inline-block;
   padding: 3px;
@@ -97,10 +89,6 @@ header.light-mode {
 
 .description.light-mode .chevron {
   border-color: #d48806;
-}
-
-.hidden {
-  display: none;
 }
 
 table {
@@ -120,7 +108,7 @@ th,
 td {
   padding: 12px;
   text-align: center;
-  color: var(--text-color-dark);
+  color: #fff;
 }
 
 th {
@@ -130,7 +118,7 @@ th {
 
 th.light-mode {
   background-color: #000;
-  color: var(--text-color-dark);
+  color: #fff;
 }
 
 tr:nth-child(even) {
@@ -142,7 +130,7 @@ tr.light-mode:nth-child(even) {
 }
 
 td.light-mode {
-  color: var(--text-color-light);
+  color: #000;
 }
 
 .flag {
@@ -159,16 +147,9 @@ td.light-mode {
 .toggle-container {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   position: absolute;
   right: 20px;
   top: 15px;
-}
-
-.toggle-item {
-  margin-left: 10px;
-  display: flex;
-  align-items: center;
 }
 
 .toggle-label {
@@ -211,11 +192,11 @@ td.light-mode {
 .credits {
   margin-top: 20px;
   font-size: 14px;
-  color: var(--text-color-dark);
+  color: #fff;
 }
 
 .credits.light-mode {
-  color: var(--text-color-light);
+  color: #000;
 }
 
 .credits a {
