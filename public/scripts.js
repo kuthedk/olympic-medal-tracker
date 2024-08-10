@@ -179,9 +179,28 @@ function renderTable(data, isAlvieMode = false) {
   document.getElementById('population-factor-header').style.display = isAlvieMode ? '' : 'none';
   document.getElementById('adjusted-score-header').style.display = isAlvieMode ? '' : 'none';
 
+  let currentRank = 1; // Start rank at 1
+  let previousPoints = null;
+  let rankToDisplay = 1; // The rank that will be displayed
+
   data.forEach((entry, index) => {
+    if (previousPoints !== null && previousPoints === entry.points) {
+      // Same points as previous entry, rank stays the same
+      // Do not increment rankToDisplay
+      // Do not increment currentRank
+    } else {
+      // Different points, update rankToDisplay to the currentRank
+      rankToDisplay = currentRank;
+      // Increment the currentRank
+      currentRank++; 
+    }
+
+    // Store the current points for the next comparison
+    previousPoints = entry.points;
+
+    // Render the row with the correct rank
     const row = `<tr class="${document.body.classList.contains('light-mode') ? 'light-mode' : ''}">
-      <td>${index + 1}</td>
+      <td>${rankToDisplay}</td>
       <td>${entry.country} ${entry.flag ? `<img src="${entry.flag}" alt="${entry.country} flag" class="flag">` : ''}</td>
       <td>${entry.gold.toLocaleString()}</td>
       <td>${entry.silver.toLocaleString()}</td>
