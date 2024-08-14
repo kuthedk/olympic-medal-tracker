@@ -1,26 +1,30 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-analytics.js";
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
+import { getAnalytics } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-analytics.js';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAwLeHdH7IZT0WhRCZnzz9ijH9TdY_gfEA",
-  authDomain: "olympic-medal-tracker.firebaseapp.com",
-  projectId: "olympic-medal-tracker",
-  storageBucket: "olympic-medal-tracker.appspot.com",
-  messagingSenderId: "443481946432",
-  appId: "1:443481946432:web:3d1fd43c7333b307ffe2a5",
-  measurementId: "G-EZGKTP52D9"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
+  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID,
 };
 
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
-document.getElementById('dark-mode-toggle').addEventListener('change', toggleDarkMode);
+document
+  .getElementById('dark-mode-toggle')
+  .addEventListener('change', toggleDarkMode);
 
 export function calculatePoints(data) {
-  return data.map(entry => ({
-    ...entry,
-    points: entry.gold * 25 + entry.silver * 10 + entry.bronze * 4
-  })).sort((a, b) => b.points - a.points);
+  return data
+    .map((entry) => ({
+      ...entry,
+      points: entry.gold * 25 + entry.silver * 10 + entry.bronze * 4,
+    }))
+    .sort((a, b) => b.points - a.points);
 }
 
 (async function () {
@@ -60,13 +64,17 @@ export async function fetchMedalData() {
     const response = await fetch('https://api.olympics.kevle.xyz/medals');
     const data = await response.json();
     const countryFlags = await fetchCountryFlags();
-    return data.results.map(result => ({
+    return data.results.map((result) => ({
       country: result.country.name,
       countryCode: result.country.iso_alpha_2, // Use ISO Alpha-2 code for matching
-      flag: countryFlags[result.country.iso_alpha_2] || countryFlags[result.country.iso_alpha_3] || countryFlags[result.country.code.toLowerCase()] || '',
+      flag:
+        countryFlags[result.country.iso_alpha_2] ||
+        countryFlags[result.country.iso_alpha_3] ||
+        countryFlags[result.country.code.toLowerCase()] ||
+        '',
       gold: result.medals.gold,
       silver: result.medals.silver,
-      bronze: result.medals.bronze
+      bronze: result.medals.bronze,
     }));
   } catch (error) {
     console.error('Error fetching medal data:', error);
@@ -96,7 +104,7 @@ export async function fetchPopulationData() {
     const data = await response.json();
     const populationData = {};
 
-    data.forEach(country => {
+    data.forEach((country) => {
       const code2 = country.cca2; // ISO Alpha-2 code
       const code3 = country.cca3; // ISO Alpha-3 code
       const population = country.population || 1; // Default to 1 if population is missing
@@ -116,7 +124,10 @@ export async function fetchPopulationData() {
   }
 }
 
-export function calculateGlobalPopulationPercentage(countryPopulation, globalPopulation) {
+export function calculateGlobalPopulationPercentage(
+  countryPopulation,
+  globalPopulation
+) {
   const percentage = (countryPopulation / globalPopulation) * 100;
 
   // If the percentage is very small, use scientific notation or more decimal places
@@ -141,43 +152,62 @@ export function formatPopulation(population) {
 
 export async function adjustScoresForPopulation(data) {
   const populationData = await fetchPopulationData();
-  const globalPopulation = Object.values(populationData).reduce((acc, population) => acc + population, 0);
+  const globalPopulation = Object.values(populationData).reduce(
+    (acc, population) => acc + population,
+    0
+  );
 
-  return data.map(entry => {
-    const countryCode = entry.countryCode;
-    let countryPopulation = populationData[countryCode] || 1;
+  return data
+    .map((entry) => {
+      const countryCode = entry.countryCode;
+      let countryPopulation = populationData[countryCode] || 1;
 
-    if (entry.country === "EOR") {
-      countryPopulation = 37; // Set EOR population to 37
-    }
+      if (entry.country === 'EOR') {
+        countryPopulation = 37; // Set EOR population to 37
+      }
 
-    const globalPopulationPercentage = calculateGlobalPopulationPercentage(countryPopulation, globalPopulation);
-    const adjustedScore = entry.points / (globalPopulationPercentage / 100); // Adjusted score for sorting
+      const globalPopulationPercentage = calculateGlobalPopulationPercentage(
+        countryPopulation,
+        globalPopulation
+      );
+      const adjustedScore = entry.points / (globalPopulationPercentage / 100); // Adjusted score for sorting
 
-    return {
-      ...entry,
-      population: formatPopulation(countryPopulation),
-      globalPopulationPercentage,
-      adjustedScore, // Keep this for sorting
-      formattedAdjustedScore: adjustedScore.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","), // Format for display
-    };
-  }).sort((a, b) => b.adjustedScore - a.adjustedScore); // Sort by numerical adjusted score
+      return {
+        ...entry,
+        population: formatPopulation(countryPopulation),
+        globalPopulationPercentage,
+        adjustedScore, // Keep this for sorting
+        formattedAdjustedScore: adjustedScore
+          .toFixed(2)
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ','), // Format for display
+      };
+    })
+    .sort((a, b) => b.adjustedScore - a.adjustedScore); // Sort by numerical adjusted score
 }
 
-document.getElementById('alvie-mode-toggle').addEventListener('change', async function () {
-  const isAlvieMode = this.checked;
-  const medalData = await fetchMedalData();
-  const data = isAlvieMode ? await adjustScoresForPopulation(calculatePoints(medalData)) : calculatePoints(medalData);
-  renderTable(data, isAlvieMode);
-});
+document
+  .getElementById('alvie-mode-toggle')
+  .addEventListener('change', async function () {
+    const isAlvieMode = this.checked;
+    const medalData = await fetchMedalData();
+    const data = isAlvieMode
+      ? await adjustScoresForPopulation(calculatePoints(medalData))
+      : calculatePoints(medalData);
+    renderTable(data, isAlvieMode);
+  });
 
 function renderTable(data, isAlvieMode = false) {
-  const tableBody = document.getElementById("medal-table");
-  tableBody.innerHTML = "";
+  const tableBody = document.getElementById('medal-table');
+  tableBody.innerHTML = '';
 
-  document.getElementById('population-header').style.display = isAlvieMode ? '' : 'none';
-  document.getElementById('population-factor-header').style.display = isAlvieMode ? '' : 'none';
-  document.getElementById('adjusted-score-header').style.display = isAlvieMode ? '' : 'none';
+  document.getElementById('population-header').style.display = isAlvieMode
+    ? ''
+    : 'none';
+  document.getElementById('population-factor-header').style.display =
+    isAlvieMode ? '' : 'none';
+  document.getElementById('adjusted-score-header').style.display = isAlvieMode
+    ? ''
+    : 'none';
 
   let currentRank = 1;
   let previousPoints = null;
@@ -190,17 +220,27 @@ function renderTable(data, isAlvieMode = false) {
       currentRank = index + 1;
       previousRank = currentRank; // Update the previous rank
     }
-    
+
     previousPoints = entry.points;
 
-    const row = `<tr class="${document.body.classList.contains('light-mode') ? 'light-mode' : ''}">
+    const row = `<tr class="${
+      document.body.classList.contains('light-mode') ? 'light-mode' : ''
+    }">
       <td>${currentRank}</td>
-      <td>${entry.country} ${entry.flag ? `<img src="${entry.flag}" alt="${entry.country} flag" class="flag">` : ''}</td>
+      <td>${entry.country} ${
+      entry.flag
+        ? `<img src="${entry.flag}" alt="${entry.country} flag" class="flag">`
+        : ''
+    }</td>
       <td>${entry.gold.toLocaleString()}</td>
       <td>${entry.silver.toLocaleString()}</td>
       <td>${entry.bronze.toLocaleString()}</td>
       <td>${entry.points.toLocaleString()}</td>
-      ${isAlvieMode ? `<td>${entry.population}</td><td>${entry.globalPopulationPercentage}%</td><td>${entry.formattedAdjustedScore}</td>` : ''}
+      ${
+        isAlvieMode
+          ? `<td>${entry.population}</td><td>${entry.globalPopulationPercentage}%</td><td>${entry.formattedAdjustedScore}</td>`
+          : ''
+      }
     </tr>`;
     tableBody.innerHTML += row;
   });
@@ -210,27 +250,27 @@ function renderTable(data, isAlvieMode = false) {
 document.getElementById('tooltip-trigger').addEventListener('click', openModal);
 
 function openModal() {
-  document.getElementById("alvieModal").style.display = "block";
+  document.getElementById('alvieModal').style.display = 'block';
 }
 
 function closeModal() {
-  document.getElementById("alvieModal").style.display = "none";
+  document.getElementById('alvieModal').style.display = 'none';
 }
 
 // Make closeModal accessible globally
 window.closeModal = closeModal;
 
 // Close the modal when the user clicks outside of it
-window.onclick = function(event) {
-  const modal = document.getElementById("alvieModal");
+window.onclick = function (event) {
+  const modal = document.getElementById('alvieModal');
   if (event.target == modal) {
     closeModal(); // Ensures the same function is used to close the modal
   }
 };
 
 // Ensure accessibility: close modal with Escape key
-document.addEventListener('keydown', function(event) {
-  if (event.key === "Escape") {
+document.addEventListener('keydown', function (event) {
+  if (event.key === 'Escape') {
     closeModal();
   }
 });
@@ -241,21 +281,21 @@ function toggleDarkMode() {
     document.querySelector('header'),
     document.querySelector('.container'),
     document.querySelector('.description'),
-    document.querySelector('.credits')
+    document.querySelector('.credits'),
   ];
 
-  elementsToToggle.forEach(el => el.classList.toggle('dark-mode'));
-  elementsToToggle.forEach(el => el.classList.toggle('light-mode'));
+  elementsToToggle.forEach((el) => el.classList.toggle('dark-mode'));
+  elementsToToggle.forEach((el) => el.classList.toggle('light-mode'));
 
-  document.querySelectorAll('th').forEach(th => {
+  document.querySelectorAll('th').forEach((th) => {
     th.classList.toggle('dark-mode');
     th.classList.toggle('light-mode');
   });
-  document.querySelectorAll('tr:nth-child(even)').forEach(tr => {
+  document.querySelectorAll('tr:nth-child(even)').forEach((tr) => {
     tr.classList.toggle('dark-mode');
     tr.classList.toggle('light-mode');
   });
-  document.querySelectorAll('td').forEach(td => {
+  document.querySelectorAll('td').forEach((td) => {
     td.classList.toggle('light-mode');
   });
 }
@@ -276,7 +316,7 @@ window.toggleDescription = function toggleDescription() {
     chevron.classList.remove('down');
     chevron.classList.add('right');
   }
-}
+};
 
 window.toggleSection = function toggleSection(id) {
   const section = document.getElementById(id);
@@ -289,4 +329,4 @@ window.toggleSection = function toggleSection(id) {
     section.classList.add('active');
     chevron.classList.add('down');
   }
-}
+};
